@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController
 {
     @IBOutlet weak var display: UILabel!
+    @IBOutlet weak var displayHistory: UILabel!
     
     var userIsInTheMiddleOfTypingANumber = false
     
@@ -37,6 +38,7 @@ class ViewController: UIViewController
             enter()
         }
         if let operation = sender.currentTitle {
+            appendHistory("\(operation)") // update the history display
             if let result = brain.performOperation(operation) {
                 displayValue = result
             } else {
@@ -49,9 +51,26 @@ class ViewController: UIViewController
         userIsInTheMiddleOfTypingANumber = false
         if let result = brain.pushOperand(displayValue) {
             displayValue = result
+            appendHistory("\(result)") // update the history display
         } else {
             displayValue = 0
         }
+    }
+    
+    private func appendHistory(op: String) {
+        if displayHistory.text == nil || displayHistory.text!.isEmpty {
+            displayHistory.text = op
+        } else {
+            displayHistory.text = displayHistory.text! + ", \(op)"
+        }
+    }
+    
+    // reset the calculator
+    @IBAction func clear() {
+        displayHistory.text = nil
+        displayValue = 0
+        brain.clear()
+        userIsInTheMiddleOfTypingANumber = false
     }
     
     var displayValue: Double {
